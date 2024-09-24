@@ -5,22 +5,29 @@ import Dashboard from "@/components/Dashboard";
 import { getRegisterLink } from "@/lib/utils";
 
 const Page = async () => {
-    const { getUser } = getKindeServerSession()
-    const user = getUser()
+  const { getUser } = getKindeServerSession()
+  const user = getUser()
 
 
-    if (!user || !user.id) redirect(getRegisterLink())
+  if (!user || !user.id) redirect(getRegisterLink())
 
 
-    const dbUser = await db.user.findFirst({
-        where: {
-            id: user.id
-        }
-    })
+  const dbUser = await db.user.findFirst({
+    where: {
+      id: user.id
+    }
+  })
 
-    if(!dbUser) redirect(getRegisterLink())
+  if (!dbUser) {
+    await db.user.create({
+      data: {
+        id: user.id,
+        email: user.email || '',
+      },
+    });
+  }
 
-    return <Dashboard />
+  return <Dashboard />
 }
 
 export default Page
