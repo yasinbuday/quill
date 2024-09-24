@@ -2,7 +2,7 @@
 
 This project allows you to upload a PDF and start a conversation with it using the power of ChatGPT. You can ask questions, get insights, and explore the content of your document in a more interactive way.
 
-## What I learned
+### What I learned
 
 - TypeScript: Strongly-typed language for building reliable and scalable applications.
 - Next.js (App Router): React-based framework with file-system routing, server-side rendering, and API routes.
