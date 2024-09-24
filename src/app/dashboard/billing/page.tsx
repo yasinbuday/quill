@@ -1,7 +1,7 @@
 import BillingForm from "@/components/BillingForm";
 
 const Page = () => {
-    return <BillingForm />;
+  return <BillingForm />;
 };
 
 export default Page;

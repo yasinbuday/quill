@@ -1,13 +1,11 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import {
-  createUploadthing,
-  type FileRouter,
-} from "uploadthing/next";
-import { db } from "@/db";
-import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { getPineconeClient } from "@/lib/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
+import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+import { type FileRouter, createUploadthing } from "uploadthing/next";
+
+import { db } from "@/db";
+import { getPineconeClient } from "@/lib/pinecone";
 
 const f = createUploadthing();
 
@@ -17,7 +15,7 @@ export const ourFileRouter = {
       const { getUser } = getKindeServerSession();
       const user = getUser();
 
-      if (!user || !user.id) throw new Error('Unauthorized');
+      if (!user || !user.id) throw new Error("Unauthorized");
 
       return { userId: user.id };
     })
@@ -28,17 +26,15 @@ export const ourFileRouter = {
           name: file.name,
           userId: metadata.userId,
           url: `https://utfs.io/f/${file.key}`,
-          uploadStatus: 'PROCESSING',
+          uploadStatus: "PROCESSING",
         },
       });
 
       try {
-        const response = await fetch(
-          `https://utfs.io/f/${file.key}`
-        );
+        const response = await fetch(`https://utfs.io/f/${file.key}`);
 
         if (!response.ok) {
-          throw new Error('Failed to fetch PDF file');
+          throw new Error("Failed to fetch PDF file");
         }
 
         const blob = await response.blob();
@@ -46,14 +42,14 @@ export const ourFileRouter = {
         const loader = new PDFLoader(blob);
 
         const pageLevelDocs = await loader.load();
-        const pagesAmt = pageLevelDocs.length
+        const pagesAmt = pageLevelDocs.length;
 
         if (!pageLevelDocs || pageLevelDocs.length === 0) {
-          throw new Error('PDFLoader failed to load any pages');
+          throw new Error("PDFLoader failed to load any pages");
         }
 
         const pinecone = await getPineconeClient();
-        const pineconeIndex = pinecone.Index('quillmentor');
+        const pineconeIndex = pinecone.Index("quillmentor");
 
         const embeddings = new OpenAIEmbeddings({
           openAIApiKey: process.env.OPENAI_API_KEY!,
@@ -73,7 +69,7 @@ export const ourFileRouter = {
           },
         });
       } catch (err) {
-        console.error('Error during PDF processing and indexing:', err);
+        console.error("Error during PDF processing and indexing:", err);
         await db.file.update({
           data: {
             uploadStatus: "FAILED",
