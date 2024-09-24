@@ -29,7 +29,7 @@ export default function Home() {
         <Link className={buttonVariants({
           size: 'lg',
           className: "mt-5"
-        })} href={user ? '/dashboard' : getRegisterLink()} target="_blank">
+        })} href={user ? '/dashboard' : getRegisterLink()}>
           Get Started <ArrowRight className="ml-2 h-5 w-5" />
         </Link>
       </MaxWidthWrapper>
